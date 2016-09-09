@@ -1,0 +1,5 @@
+---
+ - hosts: lizardfs_chunkserver
+   roles:
+      - format_disks
+

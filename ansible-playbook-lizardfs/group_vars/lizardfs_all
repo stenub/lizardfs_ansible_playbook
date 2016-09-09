@@ -1,0 +1,22 @@
+lizardfs:
+   chunkserver:
+      enable_service: true
+   
+   metalogger:
+      enable_service: true
+
+   
+   disks:
+      - { device: /dev/sda, mountpoint: /mnt/mfschunk0, label: DISK00 }     
+      - { device: /dev/sdb, mountpoint: /mnt/mfschunk1, label: DISK01 }
+      - { device: /dev/sdc, mountpoint: /mnt/mfschunk2, label: DISK02 }
+      - { device: /dev/sdd, mountpoint: /mnt/mfschunk3, label: DISK03 }
+      - { device: /dev/sde, mountpoint: /mnt/mfschunk4, label: DISK04 }
+      - { device: /dev/sdf, mountpoint: /mnt/mfschunk5, label: DISK05 }
+      - { device: /dev/sdg, mountpoint: /mnt/mfschunk6, label: DISK06 }
+      - { device: /dev/sdh, mountpoint: /mnt/mfschunk7, label: DISK07 }
+      - { device: /dev/sdi, mountpoint: /mnt/mfschunk8, label: DISK08 }
+      - { device: /dev/sdj, mountpoint: /mnt/mfschunk9, label: DISK09 }
+      - { device: /dev/sdk, mountpoint: /mnt/mfschunk10, label: DISK10 }
+      - { device: /dev/sdl, mountpoint: /mnt/mfschunk11, label: DISK11 }
+

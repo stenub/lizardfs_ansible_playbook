@@ -1,0 +1,10 @@
+---
+ - name: Kopiere Metaloggerkonfig
+   template: src=mfsmetalogger.cfg.j2 dest=/etc/mfs/mfsmetalogger.cfg owner=root group=root mode=0644
+   notify: reload lizardfs-metalogger
+
+ - name: Installiere lizardfs-metalogger
+   apt: name=lizardfs-metalogger state=present
+
+ - name: Aktiviere lizardfs-metalogger als Service
+   template: src=lizardfs-metalogger.j2 dest=/etc/default/lizardfs-metalogger mode=0644 force=yes

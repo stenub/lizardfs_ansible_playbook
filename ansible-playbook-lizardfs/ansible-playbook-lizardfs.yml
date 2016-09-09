@@ -1,0 +1,20 @@
+---
+ - hosts: lizardfs_all
+   roles: 
+      - lizardfs_common
+
+ - hosts: lizardfs_master
+   roles:
+      - lizardfs_master
+
+ - hosts: lizardfs_chunkserver
+   roles:
+      - lizardfs_chunkserver
+
+ - hosts: lizardfs_cgiserv
+   roles:
+      - lizardfs_cgiserv
+
+ - hosts: lizardfs_metalogger
+   roles:
+      - lizardfs_metalogger

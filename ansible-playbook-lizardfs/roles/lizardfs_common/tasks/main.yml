@@ -1,0 +1,62 @@
+ - name: Installiere Pakete 
+   apt: name={{ item }} state=installed
+   with_items: 
+      - ifenslave
+      - ntpdate
+      - xinetd
+      - snmpd      
+      - smartmontools
+
+ - name: Add LizardFS Repository Key
+   apt_key: url=http://packages.lizardfs.com/lizardfs.key keyring=/etc/apt/trusted.gpg.d/lizardfs.gpg state=present
+
+ - name: Add LizardFS Repository to sources.list
+   apt_repository: repo='deb http://packages.lizardfs.com/debian/jessie jessie main' state=present update_cache=yes
+
+ - name: Kopiere Check_MK Agent
+   copy: src=check-mk-agent_1.2.6p16.deb dest=/root/ force=no
+   register: check_mk
+
+ - name: Installiere Check_MK Agent
+   command: dpkg -i /root/check-mk-agent_1.2.6p16.deb
+   when: check_mk.changed
+
+ - name: Erstelle mfs Group
+   group: name=mfs state=present
+
+ - name: Erstelle mfs User
+   user: name=mfs group=mfs home=/var/lib/mfs shell=/bin/false
+
+ - name: Erstelle /etc/mfs/ Verzeichnis
+   file: path=/etc/mfs owner=root group=root state=directory mode=0755
+
+ - name: Setze bond0 Netzwerkkonfiguration
+   blockinfile:
+      state: present
+      backup: yes 
+      dest: /etc/network/interfaces
+      marker: "# {mark} ANSIBLE MANAGED BLOCK"
+      block: |
+        auto bond0
+        iface bond0 inet static
+          address {{ bond0_ip }}
+          netmask 255.255.255.0
+          bond-slaves eth2 eth3
+          bond-mode 802.3ad
+          bond-miimon 100
+          mtu 9000
+   register: bond0_conf   
+
+ - name: Starte Netzwerkdienst neu
+   service: name=networking state=restarted
+   when: bond0_conf.changed
+
+ - name: Hole Facts neu
+   setup:
+   when: bond0_conf.changed
+
+ - name: Setze Eintrag in /etc/hosts für lizardfs-master
+   lineinfile:
+      dest=/etc/hosts regexp="{{ hostvars[item]['ansible_bond0']['ipv4']['address'] }}"
+      line="{{ hostvars[item]['ansible_bond0']['ipv4']['address'] }} {{ hostvars[item]['ansible_hostname'] }}" state=present
+   with_inventory_hostnames: all

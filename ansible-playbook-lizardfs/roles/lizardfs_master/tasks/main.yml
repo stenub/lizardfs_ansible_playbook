@@ -1,0 +1,19 @@
+---
+ - name: Kopiere Masterserverkonfig
+   template: src={{ item }}.j2 dest=/etc/mfs/{{ item }} owner=root group=root mode=0644
+   with_items:
+     - mfsexports.cfg  
+     - mfsgoals.cfg  
+     - mfsmaster.cfg
+     - mfstopology.cfg
+   notify: reload lizardfs-master
+
+ - name: Kopiere metadata.mfs file
+   copy: src=metadata.mfs dest=/var/lib/mfs/metadata.mfs backup=yes mode=0644 force=no 
+   
+ - name: Installiere lizardfs-master
+   apt: name=lizardfs-master state=present
+
+ - name: Aktiviere lizardfs-master als Service
+   template: src=lizardfs-master.j2 dest=/etc/default/lizardfs-master mode=0644 force=yes
+

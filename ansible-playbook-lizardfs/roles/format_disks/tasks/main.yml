@@ -1,0 +1,41 @@
+---
+# - name: Unmounte alle Partitionen
+#   mount: name="{{ item.mountpoint }}" state=unmounted
+#   with_items:
+#      "{{ lizardfs.disks }}"
+#   tags:
+#      -unmount
+
+ - name: Installiere parted
+   apt: name=parted state=installed
+
+
+# - name: Lösche alle Partitonen auf den Chunkplatten
+#   shell: parted --script "{{ item.device }}" rm 1
+#   args:
+#     executable: '/bin/bash'
+#   with_items: "{{ lizardfs.disks }}"
+
+
+ - name: Partitioniere alle Chunk-Platten
+   shell: parted --script "{{ item.device }}" mklabel gpt mkpart primary 1MiB 100%
+   args:
+     creates: "{{ item.device }}1" 
+     executable: '/bin/bash'
+   with_items: "{{ lizardfs.disks }}"
+
+ - name: Formatiere alle Chunk-Platten mit xfs
+   filesystem: dev="{{ item.device }}1" fstype=xfs opts="-L {{ item.label }}" force=yes
+   with_items: "{{ lizardfs.disks }}"
+
+ - name: Registriere alle UUIDs
+   command: blkid -s UUID -o value "{{ item.device }}1"
+   register: part_uuid
+   with_items: "{{ lizardfs.disks }}"    
+
+
+ - name: Mounte alle Chunk-Platten in das jeweilige Verzeichnis
+   mount: src='UUID={{ item.1.stdout }}' name={{ item.0.mountpoint }}  fstype=xfs opts=noatime,nodiratime,logbufs=8,logbsize=256k,largeio,inode64,swalloc,allocsize=131072k state=mounted
+   with_together:
+      - "{{ lizardfs.disks }}"
+      - "{{ part_uuid.results }}"

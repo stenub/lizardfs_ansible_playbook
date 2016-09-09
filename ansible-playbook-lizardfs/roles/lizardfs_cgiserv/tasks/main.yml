@@ -1,0 +1,7 @@
+---
+ - name: Installiere Lizardfs Webgui Pakete
+   apt: name=lizardfs-cgiserv state=installed
+
+# - name: Aktiviere lizardfs-cgiserv als Service
+#   template: src=lizardfs-cgiserv.j2 dest=/etc/default/lizardfs-cgiserv backup=yes mode=0644
+    
