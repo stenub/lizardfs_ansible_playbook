@@ -9,8 +9,8 @@ lizardfs_shadowmaster
 
 
 [lizardfs_chunkserver]
-#172.16.17.31
-#172.16.17.32
+172.16.17.31
+172.16.17.32
 172.16.17.33
 
 
