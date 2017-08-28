@@ -1,20 +1,23 @@
 ---
-# - name: Unmounte alle Partitionen
-#   mount: name="{{ item.mountpoint }}" state=unmounted
-#   with_items:
-#      "{{ lizardfs.disks }}"
-#   tags:
-#      -unmount
+ - name: Unmounte alle Partitionen
+   mount: name="{{ item.mountpoint }}" state=unmounted
+   with_items:
+      "{{ lizardfs.disks }}"
+   tags:
+      -unmount
 
  - name: Installiere parted
    apt: name=parted state=installed
 
+ - name: Installiere xfsprogs
+   apt: name=xfsprogs state=installed
 
-# - name: Lösche alle Partitonen auf den Chunkplatten
-#   shell: parted --script "{{ item.device }}" rm 1
-#   args:
-#     executable: '/bin/bash'
-#   with_items: "{{ lizardfs.disks }}"
+
+ - name: Lösche alle Partitonen auf den Chunkplatten
+   shell: parted --script "{{ item.device }}" rm 1
+   args:
+     executable: '/bin/bash'
+   with_items: "{{ lizardfs.disks }}"
 
 
  - name: Partitioniere alle Chunk-Platten
